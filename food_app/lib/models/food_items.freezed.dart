@@ -20,8 +20,8 @@ FoodItem _$FoodItemFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$FoodItem {
-  String get name => throw _privateConstructorUsedError;
-  String get description => throw _privateConstructorUsedError;
+  String? get name => throw _privateConstructorUsedError;
+  String? get description => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -34,7 +34,7 @@ abstract class $FoodItemCopyWith<$Res> {
   factory $FoodItemCopyWith(FoodItem value, $Res Function(FoodItem) then) =
       _$FoodItemCopyWithImpl<$Res, FoodItem>;
   @useResult
-  $Res call({String name, String description});
+  $Res call({String? name, String? description});
 }
 
 /// @nodoc
@@ -50,18 +50,18 @@ class _$FoodItemCopyWithImpl<$Res, $Val extends FoodItem>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? name = null,
-    Object? description = null,
+    Object? name = freezed,
+    Object? description = freezed,
   }) {
     return _then(_value.copyWith(
-      name: null == name
+      name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: null == description
+              as String?,
+      description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ) as $Val);
   }
 }
@@ -74,7 +74,7 @@ abstract class _$$FoodItemImplCopyWith<$Res>
       __$$FoodItemImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String name, String description});
+  $Res call({String? name, String? description});
 }
 
 /// @nodoc
@@ -88,18 +88,18 @@ class __$$FoodItemImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? name = null,
-    Object? description = null,
+    Object? name = freezed,
+    Object? description = freezed,
   }) {
     return _then(_$FoodItemImpl(
-      name: null == name
+      name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: null == description
+              as String?,
+      description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -113,9 +113,9 @@ class _$FoodItemImpl implements _FoodItem {
       _$$FoodItemImplFromJson(json);
 
   @override
-  final String name;
+  final String? name;
   @override
-  final String description;
+  final String? description;
 
   @override
   String toString() {
@@ -152,16 +152,16 @@ class _$FoodItemImpl implements _FoodItem {
 
 abstract class _FoodItem implements FoodItem {
   factory _FoodItem(
-      {required final String name,
-      required final String description}) = _$FoodItemImpl;
+      {required final String? name,
+      required final String? description}) = _$FoodItemImpl;
 
   factory _FoodItem.fromJson(Map<String, dynamic> json) =
       _$FoodItemImpl.fromJson;
 
   @override
-  String get name;
+  String? get name;
   @override
-  String get description;
+  String? get description;
   @override
   @JsonKey(ignore: true)
   _$$FoodItemImplCopyWith<_$FoodItemImpl> get copyWith =>

@@ -8,8 +8,8 @@ part of 'food_items.dart';
 
 _$FoodItemImpl _$$FoodItemImplFromJson(Map<String, dynamic> json) =>
     _$FoodItemImpl(
-      name: json['name'] as String,
-      description: json['description'] as String,
+      name: json['name'] as String?,
+      description: json['description'] as String?,
     );
 
 Map<String, dynamic> _$$FoodItemImplToJson(_$FoodItemImpl instance) =>
