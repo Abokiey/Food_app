@@ -1,20 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:food_shopping_app/store/food_store.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:food_shopping_app/models/product.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:badges/badges.dart' as badges;
+import 'package:provider/provider.dart';
+import 'package:food_shopping_app/pages/cart_page.dart';
 
-void main() {
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter(ProductAdapter());
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Product Search',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return Provider<FoodStore>(
+      create: (_) => FoodStore(),
+      child: MaterialApp(
+        title: 'Product Search',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: ProductSearchPage(),
       ),
-      home: ProductSearchPage(),
     );
   }
 }
@@ -26,10 +39,9 @@ class ProductSearchPage extends StatefulWidget {
 
 class _ProductSearchPageState extends State<ProductSearchPage> {
   final TextEditingController _controller = TextEditingController();
-  final FoodStore _foodStore = FoodStore();
   String? _error;
 
-  Future<void> _searchProducts() async {
+  Future<void> _searchProducts(FoodStore foodStore) async {
     final query = _controller.text;
     if (query.isEmpty) {
       setState(() {
@@ -39,7 +51,7 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
     }
 
     try {
-      await _foodStore.searchProducts(query);
+      await foodStore.searchProducts(query);
       setState(() {
         _error = null;
       });
@@ -52,9 +64,32 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final foodStore = Provider.of<FoodStore>(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Product Search'),
+        title: Text('Order for Products'),
+        actions: [
+          Observer(
+            builder: (_) {
+              return badges.Badge(
+                badgeContent: Text(
+                  foodStore.cart.length.toString(),
+                  style: TextStyle(color: Colors.white),
+                ),
+                child: IconButton(
+                  icon: Icon(Icons.shopping_cart),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CartPage()),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -63,12 +98,12 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
             TextField(
               controller: _controller,
               decoration: InputDecoration(
-                labelText: 'Search for a product',
+                labelText: 'Search for a product e.g pizza',
               ),
             ),
             SizedBox(height: 16),
             ElevatedButton(
-              onPressed: _searchProducts,
+              onPressed: () => _searchProducts(foodStore),
               child: Text('Search'),
             ),
             SizedBox(height: 16),
@@ -79,15 +114,20 @@ class _ProductSearchPageState extends State<ProductSearchPage> {
               )
             else
               Observer(
-                builder: (_) => _foodStore.products.isNotEmpty
+                builder: (_) => foodStore.products.isNotEmpty
                     ? Expanded(
                         child: ListView.builder(
-                          itemCount: _foodStore.products.length,
+                          itemCount: foodStore.products.length,
                           itemBuilder: (context, index) {
-                            final product = _foodStore.products[index];
+                            final product = foodStore.products[index];
                             return ListTile(
-                              leading: Image.network(product.image),
+                              leading: Image.network(
+                                  'https://img.spoonacular.com/products/${product.id}-312x231.${product.imageType}'),
                               title: Text(product.title),
+                              trailing: IconButton(
+                                icon: Icon(Icons.add_shopping_cart),
+                                onPressed: () => foodStore.addToCart(product),
+                              ),
                             );
                           },
                         ),
